@@ -22,7 +22,9 @@ jobs:
         env: 
           URL: ${{ secrets.TESTFILE_URL }}
         run: |
-          curl -L $(echo "$URL" | base64 -d) | zstd -19 > bigthing.zst      
+          set -euo pipefail
+          curl -fL "$URL" | zstd -19 > bigthing.zst
+          ls -lh bigthing.zst
       - name: Create Release and Upload
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
