@@ -23,13 +23,15 @@ jobs:
           URL: ${{ secrets.TESTFILE_URL }}
         run: |
           curl -L $(echo "$URL" | base64 -d) | zstd -19 > bigthing.zst      
-      - name: Upload Artifact
-        id: upload-step
-        uses: actions/upload-artifact@v4
-        with:
-          name: my-release-artifact
-          path: bigthing.zst
+      - name: Create Release and Upload
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Deletes the 'latest' tag/release if it exists so we can overwrite it
+          gh release delete latest --yes || true
+          git tag -d latest || true
           
-      - name: Print Direct Link # Fixed indentation: removed leading space before the hyphen
-        # Access the 'artifact-url' output from the step above
-        run: echo "Artifact URL is ${{ steps.upload-step.outputs.artifact-url }}"
+          # Creates a new release and uploads your .zst file directly
+          gh release create latest bigthing.zst \
+            --title "Latest Build" \
+            --notes "Automatic build from GitHub Actions"
