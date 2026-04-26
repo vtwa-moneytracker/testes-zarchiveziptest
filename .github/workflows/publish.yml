@@ -23,7 +23,12 @@ jobs:
           URL: ${{ secrets.TESTFILE_URL }}
         run: |
           set -euo pipefail
-          curl -fL "$URL" | zstd -19 > bigthing.zst
+          curl -fL \
+          -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" \
+          -H "Referer: https://gofile.io/" \
+          -H "Accept: */*" \
+          "$URL" \
+          | zstd -19 > bigthing.zst
           ls -lh bigthing.zst
       - name: Create Release and Upload
         env:
