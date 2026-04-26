@@ -1,7 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 name: My build action requiring more space
 on: 
-  worlflow_dispatch:
+  workflow_dispatch: # Fixed typo: 'worlflow_dispatch' -> 'workflow_dispatch'
 
 jobs:
   build:
@@ -30,6 +30,6 @@ jobs:
           name: my-release-artifact
           path: bigthing.zst
           
-       - name: Print Direct Link
+      - name: Print Direct Link # Fixed indentation: removed leading space before the hyphen
         # Access the 'artifact-url' output from the step above
         run: echo "Artifact URL is ${{ steps.upload-step.outputs.artifact-url }}"
