@@ -22,13 +22,20 @@ jobs:
         env: 
           URL: ${{ secrets.TESTFILE_URL }}
         run: |
+          pip install selenium webdriver-manager
           set -euo pipefail
+          
+          # 1. Run Selenium to get the final redirected URL
+          FINAL_URL=$(python get_link.py)
+          echo "Resolved URL: $FINAL_URL"
+
+          # 2. Download and compress on the fly
+          # We use the resolved FINAL_URL here
           curl -fL \
-          -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" \
-          -H "Referer: https://gofile.io/" \
-          -H "Accept: */*" \
-          "$URL" \
-          | zstd -19 > bigthing.zst
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" \
+            -H "Referer: https://gofile.io" \
+            "$FINAL_URL" | zstd -19 -o bigthing.zst
+          
           ls -lh bigthing.zst
       - name: Create Release and Upload
         env:
